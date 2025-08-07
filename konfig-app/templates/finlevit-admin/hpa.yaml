@@ -1,0 +1,26 @@
+{{- if .Values.components.ui.finlevit_admin.hpa.enabled -}}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.components.ui.finlevit_admin.name }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.components.ui.finlevit_admin.name }}
+  minReplicas: 1
+  maxReplicas: 10  
+  metrics:
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
+{{- end -}}

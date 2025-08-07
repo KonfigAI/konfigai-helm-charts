@@ -1,0 +1,20 @@
+{{- if .Values.service.type }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "common.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "common.labels" . | nindent 4 }}
+  annotations:
+    {{ toYaml .Values.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.deployment.containerPort }}
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: {{ include "common.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}

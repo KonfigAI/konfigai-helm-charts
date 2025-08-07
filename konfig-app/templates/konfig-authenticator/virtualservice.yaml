@@ -1,0 +1,19 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Values.components.api.konfig_authenticator.name }}
+  namespace: {{ .Values.deployment.namespace }}
+spec:
+  gateways:
+    - {{ .Values.deployment.gateway }}
+  hosts:
+    - api.{{ .Values.deployment.env }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+  http:
+  - match:
+      - uri:
+          prefix: /{{ .Values.components.api.konfig_authenticator.path }}
+    route:
+      - destination:
+          host: {{ .Values.components.api.konfig_authenticator.name }}
+          port:
+            number: 80

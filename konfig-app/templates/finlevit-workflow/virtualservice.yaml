@@ -1,0 +1,16 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ .Values.components.ui.finlevit_workflow.name }}
+  namespace: {{ .Values.deployment.namespace }}
+spec:
+  gateways:
+  - {{ .Values.deployment.gateway }}
+  hosts:
+  - {{ .Values.components.ui.finlevit_workflow.path }}.{{ .Values.deployment.env }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+  http:
+  - route:
+    - destination:
+        host: {{ .Values.components.ui.finlevit_workflow.name }}
+        port:
+          number: 80

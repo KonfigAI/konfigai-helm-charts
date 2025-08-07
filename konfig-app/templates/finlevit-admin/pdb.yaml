@@ -1,0 +1,11 @@
+{{- if .Values.components.ui.finlevit_admin.pdb.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Values.components.ui.finlevit_admin.name }}
+spec:
+  minAvailable: {{ .Values.components.ui.finlevit_admin.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app: {{ .Values.components.ui.finlevit_admin.name }}
+{{- end -}}

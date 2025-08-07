@@ -1,0 +1,24 @@
+{{- if .Values.virtualService.host }}
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: {{ include "common.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{ include "common.labels" . | nindent 4 }}
+spec:
+  hosts:
+    - {{ .Values.virtualService.host }}
+  gateways:
+    # if values.virtualService.gateway is not set, then default to common.fullname use if else use values.virtualService.gateway
+    - {{ if .Values.virtualService.gateway }}{{ .Values.virtualService.gateway }}{{ else }}{{ include "common.fullname" . }}{{ end }}
+  http:
+    - match:
+        - uri:
+            prefix: {{ .Values.virtualService.matchUriPrefix }}
+      route:
+        - destination:
+            host: {{ include "common.fullname" . }}
+            port:
+              number: {{ .Values.service.port }}
+{{- end }}

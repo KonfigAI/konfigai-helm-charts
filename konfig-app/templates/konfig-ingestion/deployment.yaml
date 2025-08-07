@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.components.api.konfig_ingestion.name }}
+  name: {{ .Values.components.api.konfig_ingestion.name }}
+  namespace: {{ .Values.deployment.namespace }}
+  annotations:
+    sidecar.istio.io/inject: "true"
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.components.api.konfig_ingestion.replicaCount }}
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: {{ .Values.components.api.konfig_ingestion.name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/interceptMode: TRACING
+        instrumentation.opentelemetry.io/inject-java: 'true'
+      labels:
+        app: {{ .Values.components.api.konfig_ingestion.name }}
+    spec:
+      containers:
+      - image: {{ .Values.registry.repository }}/{{ .Values.components.api.konfig_ingestion.name }}:{{ .Values.components.api.konfig_ingestion.version }}
+        env:
+          - name: AZURE_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: azure-ad-sp
+                key: AZURE_CLIENT_ID
+          - name: AZURE_TENANT_ID
+            valueFrom:
+              secretKeyRef:
+                name: azure-ad-sp
+                key: AZURE_TENANT_ID
+          - name: AZURE_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: azure-ad-sp
+                key: AZURE_CLIENT_SECRET
+          - name: "OTEL_JAVAAGENT_ENABLED"
+            value: "false"
+        imagePullPolicy: {{ .Values.registry.pullPolicy }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /{{ .Values.components.api.konfig_ingestion.path }}/actuator/health/liveness
+            port: {{ .Values.components.api.konfig_ingestion.port }}
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /{{ .Values.components.api.konfig_ingestion.path }}/actuator/health/readiness
+            port: {{ .Values.components.api.konfig_ingestion.port }}
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: {{ .Values.components.api.konfig_ingestion.name }}
+        ports:
+        - containerPort: {{ .Values.components.api.konfig_ingestion.port }}
+          name: 8089tcp
+          protocol: TCP
+        resources:
+          requests:
+              memory: {{ .Values.components.api.konfig_ingestion.resources.requests.memory }}
+              cpu: {{ .Values.components.api.konfig_ingestion.resources.requests.cpu }}    
+          limits:
+              memory: {{ .Values.components.api.konfig_ingestion.resources.limits.memory }}  
+              cpu: {{ .Values.components.api.konfig_ingestion.resources.limits.cpu }}
+        terminationMessagePath: /{{ .Values.deployment.env }}/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - name: application-properties-volume 
+          mountPath: "/app/config/application.properties"
+          subPath: "application.properties" 
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: application-properties-volume 
+        configMap:
+          name: api-properties-config 
+          items:
+            - key: application.properties
+              path: application.properties
+

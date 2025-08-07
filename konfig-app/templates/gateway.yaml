@@ -1,0 +1,41 @@
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: {{ .Values.deployment.namespace }}-gateway
+  namespace: {{ .Values.deployment.namespace }}
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  {{- if eq  .Values.cloud.enabled "true" }}
+    - hosts:
+        - '*'
+      port:
+        name: https
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: {{ .Values.certSecret }}
+        mode: SIMPLE
+  {{- else if eq  .Values.cloud.enabled "false" }}
+    - hosts:
+        - admin.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+        - workflow.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+        - payload.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+        - api.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+      port:
+        name: http
+        number: 80
+        protocol: HTTP
+      tls:
+        httpsRedirect: true
+    - hosts:
+        - '*.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}'
+      port:
+        name: https
+        number: 443
+        protocol: HTTPS
+      tls:
+        credentialName: {{ .Values.certSecret }}
+        mode: SIMPLE
+  {{- end }}

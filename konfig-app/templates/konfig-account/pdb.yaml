@@ -1,0 +1,11 @@
+{{- if .Values.components.api.konfig_account.pdb.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Values.components.api.konfig_account.name }}
+spec:
+  minAvailable: {{ .Values.components.api.konfig_account.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app: {{ .Values.components.api.konfig_account.name }}
+{{- end -}}

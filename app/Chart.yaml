@@ -1,0 +1,7 @@
+apiVersion: v2
+name: app
+description: A Helm chart for deploying a generic application with Kubernetes and Istio integration
+type: application
+version: "0.1.0"
+appVersion: "1.0.0"
+icon: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.cncf.io%2Fprojects%2Fhelm%2F&psig=AOvVaw3X23E1Q50yJMuxHo_2QTKx&ust=1735715101226000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCJCY-uG40YoDFQAAAAAdAAAAABAR

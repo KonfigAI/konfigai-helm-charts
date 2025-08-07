@@ -1,0 +1,11 @@
+{{- if .Values.components.api.konfig_authenticator.pdb.enabled -}}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Values.components.api.konfig_authenticator.name }}
+spec:
+  minAvailable: {{ .Values.components.api.konfig_authenticator.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app: {{ .Values.components.api.konfig_authenticator.name }}
+{{- end -}}

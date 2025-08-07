@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.components.ui.finlevit_admin.name }}
+  name: {{ .Values.components.ui.finlevit_admin.name }}
+  namespace: {{ .Values.deployment.namespace }}
+  annotations:
+    sidecar.istio.io/inject: "true"
+spec:
+  progressDeadlineSeconds: 600
+  replicas: {{ .Values.components.ui.finlevit_admin.replicaCount }}
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: {{ .Values.components.ui.finlevit_admin.name }}
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      annotations:
+        sidecar.istio.io/inject: "true"
+        sidecar.istio.io/interceptMode: TRACING
+        traffic.sidecar.istio.io/excludeOutboundPorts: "8200"
+      labels:
+        app: {{ .Values.components.ui.finlevit_admin.name }}
+    spec:
+      affinity: {}
+      containers:
+      - image: {{ .Values.registry.repository }}/{{ .Values.components.ui.finlevit_admin.name }}:{{ .Values.components.ui.finlevit_admin.version }}
+        imagePullPolicy: {{ .Values.registry.pullPolicy }}
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /index.html
+            port: {{ .Values.components.ui.finlevit_admin.port }}
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          successThreshold: 1
+          timeoutSeconds: 1
+        name: {{ .Values.components.ui.finlevit_admin.name }}
+        ports:
+        - containerPort: {{ .Values.components.ui.finlevit_admin.port }}
+          name: 8081tcp
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /index.html
+            port: {{ .Values.components.ui.finlevit_admin.port }}
+            scheme: HTTP
+          initialDelaySeconds: 1
+          periodSeconds: 2
+          successThreshold: 1
+          timeoutSeconds: 1
+        resources:
+          requests:
+              memory: {{ .Values.components.ui.finlevit_admin.resources.requests.memory }}
+              cpu: {{ .Values.components.ui.finlevit_admin.resources.requests.cpu }}    
+          limits:
+              memory: {{ .Values.components.ui.finlevit_admin.resources.limits.memory }}  
+              cpu: {{ .Values.components.ui.finlevit_admin.resources.limits.cpu }}   
+        terminationMessagePath: /{{ .Values.deployment.env }}/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - name: ui-config-volume
+          mountPath: "/app/assets/config/config.json" 
+          subPath: "config.json" 
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+      - name: ui-config-volume
+        configMap:
+          name: ui-config
+          items:
+            - key: config.json
+              path: config.json

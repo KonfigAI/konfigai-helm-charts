@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.components.api.konfig_authenticator.name }}
+  name: {{ .Values.components.api.konfig_authenticator.name }}
+  namespace: {{ .Values.deployment.namespace }}
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: {{ .Values.components.api.konfig_authenticator.port }}
+  selector:
+    app: {{ .Values.components.api.konfig_authenticator.name }}
+  sessionAffinity: None
+  type: ClusterIP

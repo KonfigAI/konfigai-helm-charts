@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ .Values.components.ui.finlevit_payload.name }}
+  name: {{ .Values.components.ui.finlevit_payload.name }}
+  namespace: {{ .Values.deployment.namespace }}
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: {{ .Values.components.ui.finlevit_payload.port }}
+  selector:
+    app: {{ .Values.components.ui.finlevit_payload.name }}
+  sessionAffinity: None
+  type: ClusterIP

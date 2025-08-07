@@ -1,0 +1,89 @@
+nameOverride: ""
+fullnameOverride: ""
+
+registry:
+  name: ""
+  repository: ""
+  pullSecrets: ""
+
+
+image:
+  name: my-docker-repo/my-app
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets: my-image-pull-secret
+
+deployment:
+  replicas: 1
+  containerPort: 8080
+  annotations: {}
+  podAnnotations: {}
+  env: []
+  resources:
+    limits:
+      cpu: "500m"
+      memory: "256Mi"
+    requests:
+      cpu: "250m"
+      memory: "128Mi"
+  startupProbe:
+    enabled: false
+    path: /startup
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    failureThreshold: 30
+  livenessProbe:
+    enabled: false
+    path: /healthz
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    failureThreshold: 3
+  readinessProbe:
+    enabled: false
+    path: /readiness
+    initialDelaySeconds: 5
+    periodSeconds: 5
+    failureThreshold: 3
+
+  dnsPolicy: ClusterFirst
+  schedulerName: default-scheduler
+  terminationGracePeriodSeconds: 30
+  securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+  annotations: {}
+
+serviceAccount:
+  create: false
+  name: ""
+
+vault:
+  serviceAccount: my-service-account
+
+virtualService:
+  host: my-app.example.com
+  gateway: my-app-gateway
+  matchUriPrefix: /
+
+gateway:
+  selector:
+    istio: ingressgateway
+  hostname: tony.tabner.com
+  tls:
+    credentialName: cluster-certs
+    mode: SIMPLE
+
+hpa:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+pdb:
+  enabled: false
+  minAvailable: 1
+
+annotations: {}

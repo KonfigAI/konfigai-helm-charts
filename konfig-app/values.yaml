@@ -1,0 +1,185 @@
+  
+vault: 
+  role: "dev_cluster"
+  auth: "auth/dev-cluster"
+  serviceAccount: "vault-dev-auth"
+
+hpa:
+  enabled: "true"
+
+certSecret : "dev-certs"
+
+registry:
+  repository: "harbor.tabner.com:443/konfig"
+  pullPolicy: "Always"
+  pullSecrets: "aw-secret"
+
+deployment:
+  env: "dev"
+  clientName: "tabner"
+  domain: "konfig.io"
+  namespace: "dev"
+  gateway: "dev-gateway"
+
+components:
+
+  ui:
+    properties: "ui-properties"
+
+    finlevit_admin:
+      name: "finlevit-admin"
+      port: 8081
+      replicaCount: 1
+      path: "admin"
+      version: "1.0.0-SNAPSHOT-11-01-2024144600-1b516ede0"
+      resources:
+        requests:
+            memory: "150Mi" 
+            cpu: "50m"      
+        limits:
+              memory: "300Mi" 
+              cpu: "150m" 
+
+    finlevit_payload:
+      name: "finlevit-payload"
+      port: 8081
+      replicaCount: 1
+      path: "payload"
+      version: "1.0.0-SNAPSHOT-26-12-2023171238-0310dd1"
+      resources:
+        requests:
+          memory: "150Mi" 
+          cpu: "50m"      
+        limits:
+          memory: "300Mi" 
+          cpu: "150m"
+    
+    finlevit_workflow:
+      name: "finlevit-workflow"
+      port: 8081
+      replicaCount: 1
+      path: "workflow"
+      version: "1.0.0-SNAPSHOT-22-12-2023113926-97c0e10"
+      resources:
+        requests:
+          memory: "150Mi" 
+          cpu: "50m"      
+        limits:
+          memory: "300Mi" 
+          cpu: "150m"  
+
+
+  api:
+    properties: "api-properties"
+
+    konfig_account:
+      name: "konfig-account"
+      port: 8089
+      replicaCount: 1
+      path: account
+      version: "1.0.0-SNAPSHOT-11-01-2024152247-d37068f"
+      resources:
+        requests:
+          cpu: "500m" 
+          memory: "2.5Gi"
+        limits:
+          cpu: "4000m"
+          memory: "4Gi"
+
+    konfig_admin:
+      name: "konfig-admin"
+      port: 9001
+      replicaCount: 1
+      path: admin
+      version: "1.0.0-SNAPSHOT-10-01-2024131449-c3d4d040"
+      resources:
+        requests:
+          cpu: "600m" 
+          memory: "1.5Gi"
+        limits:
+          cpu: "3000m"
+          memory: "3Gi"
+
+    konfig_authenticator:
+      name: "konfig-authenticator"
+      port: 9084
+      replicaCount: 1
+      path: ss
+      version: "1.0.0-SNAPSHOT-15-12-2023074821-b3c94e8"
+      resources:
+        requests:
+          cpu: "100m" 
+          memory: "900Mi"
+        limits:
+          cpu: "2000m"
+          memory: "3Gi"
+    
+    konfig_conditions:
+      name: "konfig-conditions"
+      port: 9092
+      replicaCount: 1
+      path: conditions
+      version: "1.0.0-SNAPSHOT-15-12-2023074824-b7151c9"
+      resources:
+        requests:
+          cpu: "100m" 
+          memory: "900Mi"
+        limits:
+          cpu: "2000m"
+          memory: "3Gi"
+
+    konfig_notification:
+      name: "konfig-notification"
+      port: 9070
+      replicaCount: 1
+      path: notification
+      version: "1.0.0-SNAPSHOT-09-01-2024054758-7a9ae0e"
+      resources:
+        requests:
+          cpu: "100m" 
+          memory: "900Mi"
+        limits:
+            cpu: "2000m"
+            memory: "3Gi"
+  
+    konfig_resource:
+      name: "konfig-resource"
+      port: 8080
+      replicaCount: 1
+      path: resource
+      version: "1.0.0-SNAPSHOT-12-12-2023165636-e96626a"
+      resources:
+        requests:
+          cpu: "300m" 
+          memory: "1.6Gi"
+        limits:
+          cpu: "2000m"
+          memory: "3Gi"
+
+    konfig_scheduler:
+      name: "konfig-scheduler"
+      port: 8093
+      replicaCount: 1
+      path: scheduler
+      version: "1.0.0-SNAPSHOT-08-01-2024164352-696633e"
+      resources:
+        requests:
+          cpu: "100m" 
+          memory: "900Mi"
+        limits:
+          cpu: "3000m"
+          memory: "3Gi"
+    
+    konfig_ingestion:
+      name: "konfig-ingestion"
+      port: 8089
+      replicaCount: 1
+      path: ingestion
+      version: "null-02-01-2025152543-cf5f776"
+      resources:
+        requests:
+          cpu: "100m" 
+          memory: "900Mi"
+        limits:
+          cpu: "3000m"
+          memory: "3Gi"

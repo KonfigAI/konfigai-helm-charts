@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: {{ .Values.components.api.konfig_notification.name }}
+    release: konfig-platform
+  name: {{ .Values.components.api.konfig_notification.name }}
+  namespace: {{ .Values.deployment.namespace }}
+spec:
+  endpoints:  
+  - interval: 10s
+    port: http
+    scheme: http
+    path: /{{ .Values.components.api.konfig_notification.path }}/actuator/prometheus
+  selector:
+    matchLabels:
+      app: {{ .Values.components.api.konfig_notification.name }}

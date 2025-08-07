@@ -1,0 +1,72 @@
+{{- if .Values.deployment.replicas }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "common.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    {{ include "common.annotations" . | nindent 4 }}
+  labels:
+    {{ include "common.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.deployment.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ include "common.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        {{ include "common.labels" . | nindent 8 }}
+      annotations:
+        {{ toYaml .Values.deployment.podAnnotations | nindent 8 }}
+    spec:
+      dnsPolicy: {{ .Values.deployment.dnsPolicy }}
+      schedulerName: {{ .Values.deployment.schedulerName }}
+      terminationGracePeriodSeconds: {{ .Values.deployment.terminationGracePeriodSeconds }}
+      securityContext: {{ toYaml .Values.deployment.securityContext | nindent 8 }}
+      {{- if .Values.vault.serviceAccount }}
+      serviceAccountName: {{ .Values.vault.serviceAccount }}
+      {{- else if .Values.serviceAccount.create }}
+      serviceAccountName: {{ .Values.serviceAccount.name | default (include "common.fullname" .) }}
+      {{- end }}
+      imagePullSecrets:
+        - name: "{{ .Values.registry.pullSecrets | default .Values.image.pullSecrets }}"
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ if .Values.registry.name }}{{ .Values.registry.name }}{{ if .Values.registry.repository }}/{{ .Values.registry.repository }}{{ end }}/{{ .Values.image.name }}:{{ .Values.image.tag }}{{ else }}{{ .Values.image.name }}:{{ .Values.image.tag }}{{ end }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.deployment.containerPort }}
+          env:
+            {{ toYaml .Values.deployment.env | nindent 12 }}
+          resources:
+            {{ toYaml .Values.deployment.resources | nindent 12 }}
+          {{- if .Values.deployment.startupProbe.enabled }}
+          startupProbe:
+            httpGet:
+              path: {{ .Values.deployment.startupProbe.path }}
+              port: {{ .Values.deployment.containerPort }}
+            initialDelaySeconds: {{ .Values.deployment.startupProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.startupProbe.periodSeconds }}
+            failureThreshold: {{ .Values.deployment.startupProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.deployment.livenessProbe.enabled }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.deployment.livenessProbe.path }}
+              port: {{ .Values.deployment.containerPort }}
+            initialDelaySeconds: {{ .Values.deployment.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.livenessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.deployment.livenessProbe.failureThreshold }}
+          {{- end }}
+          {{- if .Values.deployment.readinessProbe.enabled }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.deployment.readinessProbe.path }}
+              port: {{ .Values.deployment.containerPort }}
+            initialDelaySeconds: {{ .Values.deployment.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.deployment.readinessProbe.periodSeconds }}
+            failureThreshold: {{ .Values.deployment.readinessProbe.failureThreshold }}
+          {{- end }}
+{{- end }}
