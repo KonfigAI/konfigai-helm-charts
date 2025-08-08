@@ -48,7 +48,7 @@ spec:
                 name: azure-ad-sp
                 key: AZURE_CLIENT_SECRET
           - name: "OTEL_JAVAAGENT_ENABLED"
-            value: false
+            value: "false"
         imagePullPolicy: {{ .Values.registry.pullPolicy }}
         livenessProbe:
           failureThreshold: 3
