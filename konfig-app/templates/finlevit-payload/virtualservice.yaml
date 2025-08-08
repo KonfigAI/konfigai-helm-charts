@@ -7,7 +7,7 @@ spec:
   gateways:
   - {{ .Values.deployment.gateway }}
   hosts:
-  - clupayload..{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+  - clupayload.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
   http:
   - route:
     - destination:
