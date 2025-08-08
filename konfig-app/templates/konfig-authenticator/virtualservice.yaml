@@ -7,7 +7,7 @@ spec:
   gateways:
     - {{ .Values.deployment.gateway }}
   hosts:
-    - api.{{ .Values.deployment.env }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+    - cluapi.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
   http:
   - match:
       - uri:

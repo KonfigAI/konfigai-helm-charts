@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.deployment.namespace }}
 spec:
   selector:
-    istio: ingressgateway
+    istio: aks-istio-ingressgateway-external
   servers:
   {{- if eq  .Values.cloud.enabled "true" }}
     - hosts:
@@ -19,10 +19,10 @@ spec:
         mode: SIMPLE
   {{- else if eq  .Values.cloud.enabled "false" }}
     - hosts:
-        - admin.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
-        - workflow.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
-        - payload.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
-        - api.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+        - cluadmin.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+        - cluworkflow.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+        - clupayload.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+        - cluapi.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
       port:
         name: http
         number: 80

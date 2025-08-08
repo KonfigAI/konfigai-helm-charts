@@ -7,7 +7,7 @@ spec:
   gateways:
   - {{ .Values.deployment.gateway }}
   hosts:
-  - {{ .Values.components.ui.finlevit_admin.path }}.{{ .Values.deployment.env }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+  - cluadmin.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
   http:
   - route:
     - destination:

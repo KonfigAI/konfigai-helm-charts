@@ -7,7 +7,7 @@ spec:
   gateways:
   - {{ .Values.deployment.gateway }}
   hosts:
-  - {{ .Values.components.ui.finlevit_workflow.path }}.{{ .Values.deployment.env }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
+  - cluworkflow.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}
   http:
   - route:
     - destination:

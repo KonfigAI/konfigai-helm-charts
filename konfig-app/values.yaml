@@ -15,7 +15,7 @@ registry:
   pullSecrets: "aw-secret"
 
 deployment:
-  env: "dev"
+  env: "prod"
   clientName: "tabner"
   domain: "konfig.io"
   namespace: "dev"
