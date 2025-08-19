@@ -9,7 +9,7 @@ spec:
   servers:
   {{- if eq  .Values.cloud.enabled "true" }}
     - hosts:
-        - '*.{{ .Values.deployment.namespace }}.{{ .Values.deployment.clientName }}.{{ .Values.deployment.domain }}'
+        - '*.{{ .Values.deployment.namespace }}.{{ .Values.deployment.domain }}'
       port:
         name: https
         number: 443
