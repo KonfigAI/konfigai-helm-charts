@@ -62,7 +62,7 @@ spec:
         terminationMessagePolicy: File
         volumeMounts:
         - name: ui-config-volume
-          mountPath: "/app/assets/config/config.json" 
+          mountPath: "/usr/share/nginx/html/assets/config/config.json"
           subPath: "config.json" 
           readOnly: true
       dnsPolicy: ClusterFirst
